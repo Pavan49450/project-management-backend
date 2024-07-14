@@ -117,6 +117,10 @@ exports.updateAdmin = async (req, res) => {
     admin.name = name || admin.name;
     admin.email = email || admin.email;
     admin.iterations = iterations || admin.iterations;
+    // if (password) {
+    //   const salt = await bcrypt.genSalt(10);
+    //   admin.password = await bcrypt.hash(password, salt);
+    // }
 
     await admin.save();
 

@@ -1,24 +1,43 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path"); // Import path module
+
+// Routes
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
-const cors = require("cors"); // Import cors
+const paypalRoutes = require("./routes/paypalRoutes");
 
+// Load environment variables
+dotenv.config();
+
+// Initialize Express app
 const app = express();
 
-// Connect Database
+// Connect to MongoDB
 connectDB();
 
-// Init Middleware
+// Middleware
 app.use(express.json());
-app.use(cors()); // Use cors middleware
+app.use(cors());
 
-// Define Routes
 app.use("/api/admins", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/paypal", paypalRoutes);
 
-const PORT = process.env.PORT || 5000;
+// Serve static files (assuming 'client' directory contains your frontend build)
+app.use(express.static(path.resolve("client")));
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+// Serve index.html (or checkout.html for PayPal integration)
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve("checkout.html"));
+});
+
+// Start server
+const PORT = process.env.PORT || 8888;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
